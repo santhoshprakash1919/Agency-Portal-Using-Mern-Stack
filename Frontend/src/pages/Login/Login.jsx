@@ -41,40 +41,51 @@ export default function LoginPage() {
     <div className="auth-shell">
       <section className="auth-hero">
         <div className="auth-brand">
-          <span className="badge" style={{ background: "rgba(255,255,255,0.12)", color: "#fff7ef" }}>
-            Sindhu Agencies
-          </span>
-          <h1>Operate stock, orders, and dispatch without the daily scramble.</h1>
+          <h1>Sindhu Agencies</h1>
           <p>
-            This rebuild moves the portal to a secure cookie-based sign-in flow with a proper operations
-            dashboard for products, customers, agencies, and order tracking.
+            Your all-in-one portal to manage inventory, customer orders, dispatch scheduling,
+            and agency operations — from a single secure dashboard.
           </p>
+          <ul className="auth-features">
+            <li>📦 Real-time stock & product management</li>
+            <li>🚚 Order tracking & dispatch coordination</li>
+            <li>🤝 Customer & agency relationship tools</li>
+          </ul>
         </div>
       </section>
 
       <section className="auth-card-wrap">
         <form className="auth-card panel" onSubmit={handleSubmit(onSubmit)}>
-          <h2>Sign in</h2>
-          <p>Use your admin email or registered phone credentials.</p>
+          <div className="auth-card-header">
+            
+            <div>
+              <h2>Welcome back</h2>
+              <p>Sign in to your Sindhu Agencies account</p>
+            </div>
+          </div>
 
           <div className="stack">
             <Input
               label="Email or phone"
-              placeholder="example@gmail.com"
+              placeholder="you@example.com or 9XXXXXXXXX"
               error={errors.identifier?.message}
               {...register("identifier", { required: "Email or phone is required" })}
             />
             <Input
               label="Password"
               type="password"
-              placeholder="Enter password"
+              placeholder="Enter your password"
               error={errors.password?.message}
               {...register("password", { required: "Password is required" })}
             />
             <Button type="submit" loading={isSubmitting}>
-              Continue to dashboard
+              Sign in to Dashboard
             </Button>
           </div>
+
+          <p className="auth-footer-note">
+            For access or support, contact your Sindhu Agencies administrator.
+          </p>
         </form>
       </section>
     </div>
