@@ -1,10 +1,4 @@
-/**
- * seedProducts.mjs
- * Run from the Backend folder:  node src/seedProducts.mjs
- *
- * Updates all existing products in MongoDB to fill in missing fields
- * (price, category, unit, stock, gstPercent, isActive) based on their names.
- */
+
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import mongoose from "mongoose";

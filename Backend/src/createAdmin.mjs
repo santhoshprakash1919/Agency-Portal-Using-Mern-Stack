@@ -1,10 +1,4 @@
-/**
- * createAdmin.mjs
- * Run from the Backend folder:  node src/createAdmin.mjs
- *
- * Directly inserts/updates the admin user in MongoDB using bcrypt,
- * reading credentials from Backend/.env
- */
+
 import { createRequire } from "module";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
