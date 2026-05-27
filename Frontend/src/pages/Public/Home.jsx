@@ -3,7 +3,9 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import Button from "../../components/ui/Button.jsx";
 import EmptyState from "../../components/ui/EmptyState.jsx";
+import Input from "../../components/ui/Input.jsx";
 import Skeleton from "../../components/ui/Skeleton.jsx";
 import useDebounce from "../../hooks/useDebounce.js";
 import { useCreateOrder } from "../../hooks/useOrders.js";
@@ -53,7 +55,7 @@ function ProductCard({ product, onAdd }) {
   return (
     <motion.article
       variants={cardAnim}
-      className={`product-card${outOfStock ? " product-out-of-stock" : ""}`}
+      className={`panel product-card${outOfStock ? " product-out-of-stock" : ""}`}
     >
       {imgUrl ? (
         <img src={imgUrl} alt={product.name} loading="lazy" />
@@ -66,25 +68,26 @@ function ProductCard({ product, onAdd }) {
         </div>
       )}
 
-      <div className="pub-stack" style={{ gap: "0.35rem", flex: 1 }}>
+      <div className="stack" style={{ gap: "0.35rem", flex: 1 }}>
         <strong style={{ fontSize: "0.94rem", lineHeight: 1.3 }}>{product.name}</strong>
-        <span style={{ color: "#70584a", fontSize: "0.82rem" }}>{product.agency?.name || "Agency"}</span>
+        <span style={{ color: "var(--muted)", fontSize: "0.82rem" }}>{product.agency?.name || "Agency"}</span>
 
         {lowStock && <span className="product-stock-warning">⚠ Only {product.stock} left</span>}
         {outOfStock && (
-          <span className="product-stock-warning" style={{ color: "#b83f35", background: "rgba(184,63,53,0.1)" }}>
+          <span className="product-stock-warning" style={{ color: "var(--danger)", background: "rgba(184,63,53,0.1)" }}>
             Out of stock
           </span>
         )}
 
-        <div className="pub-inline wrap" style={{ justifyContent: "space-between", marginTop: "0.25rem" }}>
-          <span style={{ fontWeight: 700, color: "#a55012" }}>{formatCurrency(product.price)}</span>
-          <span style={{ color: "#70584a", fontSize: "0.8rem" }}>GST {product.gstPercent ?? 0}%</span>
+        <div className="inline wrap" style={{ justifyContent: "space-between", marginTop: "0.25rem" }}>
+          <span style={{ fontWeight: 700, color: "var(--primary-dark)" }}>{formatCurrency(product.price)}</span>
+          <span style={{ color: "var(--muted)", fontSize: "0.8rem" }}>GST {product.gstPercent ?? 0}%</span>
         </div>
       </div>
 
       <button
-        className="pub-btn pub-btn-primary"
+        className="button button-primary"
+        style={{ width: "100%", borderRadius: 12, padding: "0.6rem" }}
         onClick={() => onAdd(product)}
         disabled={outOfStock}
       >
@@ -94,7 +97,7 @@ function ProductCard({ product, onAdd }) {
   );
 }
 
-/* ── Cart item ── */
+/* ── Cart item row ── */
 function CartItem({ item, onUpdate }) {
   return (
     <motion.div
@@ -115,16 +118,6 @@ function CartItem({ item, onUpdate }) {
         <button className="cart-qty-btn" onClick={() => onUpdate(item.product._id, item.quantity + 1)}>+</button>
       </div>
     </motion.div>
-  );
-}
-
-/* ── Input scoped to public ── */
-function PubInput({ label, ...props }) {
-  return (
-    <div className="pub-stack" style={{ gap: "0.4rem" }}>
-      {label && <label style={{ fontSize: "0.88rem", fontWeight: 600, color: "#70584a" }}>{label}</label>}
-      <input className="pub-input" {...props} />
-    </div>
   );
 }
 
@@ -166,7 +159,8 @@ export default function PublicHomePage() {
       const ex = prev.find((i) => i.product._id === product._id);
       if (ex) {
         if (product.stock != null && ex.quantity >= product.stock) {
-          toast.error(`Only ${product.stock} in stock`); return prev;
+          toast.error(`Only ${product.stock} in stock`);
+          return prev;
         }
         return prev.map((i) => i.product._id === product._id ? { ...i, quantity: i.quantity + 1 } : i);
       }
@@ -203,14 +197,14 @@ export default function PublicHomePage() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
-      {/* ── Topbar ── */}
+      {/* ── Sticky topbar ── */}
       <header className="public-topbar">
         <div className="public-topbar-brand">
           {logoUrl && <img src={logoUrl} alt="Sindhu Agencies" className="public-topbar-logo" />}
           <h1 className="public-topbar-title">Sindhu Agencies</h1>
         </div>
 
-        <div className="public-topbar-search">
+        <div className="public-topbar-search searchbar">
           <span>
             <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.8" />
@@ -218,8 +212,7 @@ export default function PublicHomePage() {
             </svg>
           </span>
           <input
-            className="pub-input"
-            style={{ paddingLeft: "2.8rem" }}
+            className="input"
             placeholder="Search products, brands..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -237,40 +230,43 @@ export default function PublicHomePage() {
             {cartCount > 0 && <span key={cartCount} className="cart-badge-count">{cartCount}</span>}
           </button>
           <a href="/admin/login">
-            <button className="pub-btn pub-btn-ghost" style={{ borderRadius: 999, padding: "0.5rem 0.95rem", fontSize: "0.88rem" }}>
+            <Button variant="secondary" style={{ borderRadius: 999, padding: "0.5rem 0.95rem", fontSize: "0.88rem" }}>
               Admin
-            </button>
+            </Button>
           </a>
         </div>
       </header>
 
-      {/* ── Page body ── */}
+      {/* ── Main content grows to fill space ── */}
       <div style={{ flex: 1, padding: "1.25rem" }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
           {/* ── Hero ── */}
           <motion.section
-            className="storefront-hero"
+            className="storefront-hero panel"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.38 }}
           >
-            <div className="pub-inline pub-inline wrap" style={{ gap: "0.6rem", marginBottom: "1rem" }}>
+            {/* Top row: badge + logo */}
+            <div className="inline wrap" style={{ gap: "0.6rem", marginBottom: "1rem" }}>
               {logoUrl && <img src={logoUrl} alt="" className="storefront-logo" />}
               <span className="storefront-hero-tagline">🛒 Public Ordering Portal</span>
             </div>
 
+            {/* Main headline */}
             <h2 className="storefront-hero-title">
               Sindhu Agencies –{" "}
-              <span style={{ color: "#ce6a19" }}>Trusted FMCG Distributor</span>
+              <span style={{ color: "var(--primary)" }}>Trusted FMCG Distributor</span>
             </h2>
 
             <p className="storefront-hero-sub">
               Serving retailers and partners around{" "}
-              <strong style={{ color: "#a55012" }}>Kaveripattinam, Krishnagiri District</strong>.
+              <strong style={{ color: "var(--primary-dark)" }}>Kaveripattinam, Krishnagiri District</strong>.
               Browse products from multiple agencies, place orders instantly, and download your GST invoice — no account required.
             </p>
 
+            {/* Trust badges row */}
             <div className="hero-trust-row">
               {TRUST_BADGES.map((b) => (
                 <div key={b.title} className="hero-trust-badge">
@@ -284,7 +280,7 @@ export default function PublicHomePage() {
             </div>
           </motion.section>
 
-          {/* ── Categories ── */}
+          {/* ── Category chips with icons ── */}
           <div className="category-chips">
             {CATEGORIES.map((cat) => (
               <button
@@ -299,29 +295,47 @@ export default function PublicHomePage() {
 
           {/* ── Main grid ── */}
           <div className="storefront-grid">
+
+            {/* ── Products ── */}
             <section>
-              {/* Results bar */}
+              {/* Results count bar */}
               {!productsQuery.isLoading && (
-                <motion.div className="results-bar" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                  <span>
-                    Showing <strong>{products.length}</strong> products
-                    {activeCategory !== "All" && <> in <strong style={{ color: "#a55012" }}>{activeCategory}</strong></>}
-                    {debouncedSearch && <> for <strong style={{ color: "#a55012" }}>"{debouncedSearch}"</strong></>}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "1rem",
+                    padding: "0.6rem 1rem",
+                    background: "rgba(206,106,25,0.06)",
+                    borderRadius: 12,
+                    border: "1px solid rgba(206,106,25,0.1)",
+                  }}
+                >
+                  <span style={{ fontSize: "0.88rem", color: "var(--muted)" }}>
+                    Showing <strong style={{ color: "var(--text)" }}>{products.length}</strong> products
+                    {activeCategory !== "All" && <> in <strong style={{ color: "var(--primary-dark)" }}>{activeCategory}</strong></>}
+                    {debouncedSearch && <> for <strong style={{ color: "var(--primary-dark)" }}>"{debouncedSearch}"</strong></>}
                   </span>
                   {activeCategory !== "All" && (
-                    <button className="results-bar-clear" onClick={() => setActiveCategory("All")}>
-                      Clear ✕
+                    <button
+                      onClick={() => setActiveCategory("All")}
+                      style={{ fontSize: "0.82rem", color: "var(--primary)", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}
+                    >
+                      Clear filter ✕
                     </button>
                   )}
                 </motion.div>
               )}
 
               {productsQuery.isLoading ? (
-                <div className="pub-card-grid">
+                <div className="card-grid">
                   {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} height={280} />)}
                 </div>
               ) : agencyGroups.length ? (
-                <div className="pub-stack" style={{ gap: "2rem" }}>
+                <div className="stack" style={{ gap: "2rem" }}>
                   {agencyGroups.map(([agency, items]) => (
                     <motion.div
                       key={agency}
@@ -335,7 +349,7 @@ export default function PublicHomePage() {
                         <hr className="agency-section-divider" />
                         <span className="agency-section-count">{items.length} items</span>
                       </div>
-                      <motion.div className="pub-card-grid" variants={stagger} initial="hidden" animate="visible">
+                      <motion.div className="card-grid" variants={stagger} initial="hidden" animate="visible">
                         {items.map((p) => <ProductCard key={p._id} product={p} onAdd={addToCart} />)}
                       </motion.div>
                     </motion.div>
@@ -346,63 +360,94 @@ export default function PublicHomePage() {
               )}
             </section>
 
-            {/* ── Cart ── */}
+            {/* ── Cart / Checkout Panel ── */}
             <AnimatePresence>
               {(cartCount > 0 || step === "checkout") && (
                 <motion.aside
-                  className="cart-panel"
+                  className="panel cart-panel"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.26 }}
                 >
                   <div className="cart-panel-header">
-                    <h2 className="cart-panel-title">{step === "checkout" ? "Checkout" : "Your Order"}</h2>
-                    <span style={{ color: "#70584a", fontSize: "0.86rem" }}>{cartCount} {cartCount === 1 ? "item" : "items"}</span>
+                    <h2 className="cart-panel-title">
+                      {step === "checkout" ? "Checkout" : "Your Order"}
+                    </h2>
+                    <span style={{ color: "var(--muted)", fontSize: "0.86rem" }}>
+                      {cartCount} {cartCount === 1 ? "item" : "items"}
+                    </span>
                   </div>
 
                   {step === "browse" ? (
                     <>
-                      <div className="pub-stack" style={{ gap: "0.5rem", marginBottom: "1rem" }}>
+                      <div className="stack" style={{ gap: "0.5rem", marginBottom: "1rem" }}>
                         <AnimatePresence>
                           {cart.map((item) => (
                             <CartItem key={item.product._id} item={item} onUpdate={updateQuantity} />
                           ))}
                         </AnimatePresence>
                       </div>
+
                       <div className="cart-totals">
-                        <div className="cart-totals-row"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
-                        <div className="cart-totals-row"><span>GST</span><span>{formatCurrency(gstTotal)}</span></div>
-                        <div className="cart-totals-row grand"><span>Grand Total</span><strong>{formatCurrency(grandTotal)}</strong></div>
+                        <div className="cart-totals-row">
+                          <span>Subtotal</span><span>{formatCurrency(subtotal)}</span>
+                        </div>
+                        <div className="cart-totals-row">
+                          <span>GST</span><span>{formatCurrency(gstTotal)}</span>
+                        </div>
+                        <div className="cart-totals-row grand">
+                          <span>Grand Total</span><strong>{formatCurrency(grandTotal)}</strong>
+                        </div>
                       </div>
+
                       <div style={{ marginTop: "1rem" }}>
-                        <button className="pub-btn pub-btn-primary" style={{ width: "100%" }} onClick={() => setStep("checkout")}>
+                        <Button style={{ width: "100%" }} onClick={() => setStep("checkout")}>
                           Proceed to Checkout →
-                        </button>
+                        </Button>
                       </div>
                     </>
                   ) : (
-                    <form className="pub-stack" onSubmit={submitOrder}>
-                      <button type="button" className="pub-btn pub-btn-ghost" style={{ width: "fit-content", fontSize: "0.86rem" }} onClick={() => setStep("browse")}>
+                    <form className="stack" onSubmit={submitOrder}>
+                      <button
+                        type="button"
+                        className="button button-ghost"
+                        style={{ width: "fit-content", padding: "0.38rem 0.7rem", fontSize: "0.86rem" }}
+                        onClick={() => setStep("browse")}
+                      >
                         ← Back to cart
                       </button>
-                      <PubInput label="Store Name" value={form.storeName} required placeholder="Your shop name" onChange={(e) => setForm({ ...form, storeName: e.target.value })} />
-                      <PubInput label="Customer Name" value={form.customerName} required placeholder="Your name" onChange={(e) => setForm({ ...form, customerName: e.target.value })} />
-                      <PubInput label="Phone" type="tel" value={form.phone} required placeholder="10-digit phone" onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-                      <PubInput label="Notes (optional)" value={form.notes} placeholder="Any special requests..." onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+
+                      <Input label="Store Name" value={form.storeName} required
+                        onChange={(e) => setForm({ ...form, storeName: e.target.value })} />
+                      <Input label="Customer Name" value={form.customerName} required
+                        onChange={(e) => setForm({ ...form, customerName: e.target.value })} />
+                      <Input label="Phone" type="tel" value={form.phone} required
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                      <Input label="Notes (optional)" as="textarea" rows={2} value={form.notes}
+                        onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+
                       <div className="cart-totals">
-                        <div className="cart-totals-row"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
-                        <div className="cart-totals-row"><span>GST</span><span>{formatCurrency(gstTotal)}</span></div>
-                        <div className="cart-totals-row grand"><span>Grand Total</span><strong>{formatCurrency(grandTotal)}</strong></div>
+                        <div className="cart-totals-row">
+                          <span>Subtotal</span><span>{formatCurrency(subtotal)}</span>
+                        </div>
+                        <div className="cart-totals-row">
+                          <span>GST</span><span>{formatCurrency(gstTotal)}</span>
+                        </div>
+                        <div className="cart-totals-row grand">
+                          <span>Grand Total</span><strong>{formatCurrency(grandTotal)}</strong>
+                        </div>
                       </div>
-                      <button type="submit" className="pub-btn pub-btn-primary" style={{ width: "100%" }} disabled={createOrder.isPending}>
-                        {createOrder.isPending ? "Placing order..." : "Place Order & Get Invoice"}
-                      </button>
+
+                      <Button type="submit" loading={createOrder.isPending} style={{ width: "100%" }}>
+                        Place Order &amp; Get Invoice
+                      </Button>
                     </form>
                   )}
                 </motion.aside>
               )}
             </AnimatePresence>
+
           </div>
         </div>
       </div>
@@ -410,16 +455,23 @@ export default function PublicHomePage() {
       {/* ── Footer ── */}
       <footer className="public-footer">
         <div className="public-footer-inner">
+
+          {/* Brand column */}
           <div className="footer-brand-col">
-            <div className="pub-inline" style={{ gap: "0.6rem", marginBottom: "0.6rem" }}>
-              {logoUrl && <img src={logoUrl} alt="Sindhu Agencies" style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover" }} />}
-              <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: "1.1rem", color: "#a55012" }}>Sindhu Agencies</span>
+            <div className="inline" style={{ gap: "0.6rem", marginBottom: "0.6rem" }}>
+              {logoUrl && (
+                <img src={logoUrl} alt="Sindhu Agencies" style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover" }} />
+              )}
+              <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: "1.1rem", color: "var(--primary-dark)" }}>
+                Sindhu Agencies
+              </span>
             </div>
-            <p style={{ color: "#70584a", fontSize: "0.88rem", lineHeight: 1.6, margin: 0, maxWidth: 260 }}>
+            <p style={{ color: "var(--muted)", fontSize: "0.88rem", lineHeight: 1.6, margin: 0, maxWidth: 260 }}>
               Trusted FMCG Distributor serving retailers and partners around Kaveripattinam, Krishnagiri District.
             </p>
           </div>
 
+          {/* Info column */}
           <div className="footer-info-col">
             <div className="footer-section-title">Location</div>
             <div className="footer-info-line">
@@ -428,33 +480,41 @@ export default function PublicHomePage() {
             </div>
           </div>
 
+          {/* Quick links */}
           <div className="footer-info-col">
             <div className="footer-section-title">Quick Links</div>
             <div className="footer-links">
               <button onClick={() => setActiveCategory("All")} className="footer-link">All Products</button>
               {CATEGORIES.slice(1).map(c => (
-                <button key={c.label} onClick={() => setActiveCategory(c.label)} className="footer-link">{c.icon} {c.label}</button>
+                <button key={c.label} onClick={() => setActiveCategory(c.label)} className="footer-link">
+                  {c.icon} {c.label}
+                </button>
               ))}
             </div>
           </div>
 
+          {/* How it works */}
           <div className="footer-info-col">
             <div className="footer-section-title">How It Works</div>
             <div className="footer-steps">
-              {["Browse products","Add to cart","Place order","Download invoice"].map((s, i) => (
-                <div key={s} className="footer-step">
-                  <span className="footer-step-num">{i + 1}</span> {s}
-                </div>
-              ))}
+              <div className="footer-step"><span className="footer-step-num">1</span> Browse products</div>
+              <div className="footer-step"><span className="footer-step-num">2</span> Add to cart</div>
+              <div className="footer-step"><span className="footer-step-num">3</span> Place order</div>
+              <div className="footer-step"><span className="footer-step-num">4</span> Download invoice</div>
             </div>
           </div>
+
         </div>
 
+        {/* Bottom bar */}
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Sindhu Agencies, Kaveripattinam. All rights reserved.</span>
-          <a href="/admin/login" style={{ color: "#ce6a19", fontWeight: 600, fontSize: "0.83rem" }}>Admin Portal →</a>
+          <a href="/admin/login" style={{ color: "var(--primary)", fontWeight: 600, fontSize: "0.83rem" }}>
+            Admin Portal →
+          </a>
         </div>
       </footer>
+
     </div>
   );
 }
