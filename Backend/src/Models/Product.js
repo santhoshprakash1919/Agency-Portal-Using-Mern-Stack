@@ -23,40 +23,32 @@ const productSchema = new mongoose.Schema(
       sparse: true,
       trim: true,
     },
-    unit: {
-      type: String,
-      enum: ["box", "piece", "kg", "litre", "pack"],
-      default: "box",
+    // ── Pricing ──
+    price: { type: Number, default: 0, min: 0 },   // retail/piece price
+    mrp:   { type: Number, default: 0, min: 0 },   // MRP on packet
+
+    // ── Unit pricing ──
+    piecePrice:    { type: Number, default: 0, min: 0 }, // price per single piece
+    boxPrice:      { type: Number, default: 0, min: 0 }, // price per box
+    bagPrice:      { type: Number, default: 0, min: 0 }, // price per bag
+    piecesPerBox:  { type: Number, default: 0, min: 0 }, // how many pieces in 1 box
+    piecesPerBag:  { type: Number, default: 0, min: 0 }, // how many pieces in 1 bag
+
+    // which unit options to show on public page
+    availableUnits: {
+      type: [String],
+      enum: ["piece", "box", "bag", "kg", "litre", "pack"],
+      default: ["piece"],
     },
-    price: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    mrp: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
+
     gstPercent: {
       type: Number,
       enum: [0, 5, 12, 18, 28],
       default: 5,
     },
-    stock: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    lowStockThreshold: {
-      type: Number,
-      default: 10,
-      min: 0,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    stock:             { type: Number, default: 0, min: 0 },
+    lowStockThreshold: { type: Number, default: 10, min: 0 },
+    isActive:          { type: Boolean, default: true },
   },
   { timestamps: true }
 );

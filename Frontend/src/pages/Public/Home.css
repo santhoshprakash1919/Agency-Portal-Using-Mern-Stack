@@ -1,4 +1,10 @@
+/* ============================================================
+   Home.css — PUBLIC PAGES ONLY
+   Import this ONLY in Home.jsx and Invoice.jsx
+   Do NOT add to index.css
+   ============================================================ */
 
+/* ── Public Topbar ── */
 .public-topbar {
   position: sticky;
   top: 0;
@@ -630,4 +636,115 @@
   .pub-card-grid { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 0.75rem; }
   .public-footer-inner { grid-template-columns: 1fr; gap: 1.5rem; padding: 2rem 1.25rem 1.5rem; }
   .footer-bottom { flex-direction: column; align-items: flex-start; padding: 0.9rem 1.25rem; }
+}
+
+/* ============================================================
+   UNIT PRICING — NEW ADDITIONS
+   ============================================================ */
+
+/* MRP + retail price row */
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.price-mrp {
+  font-size: 0.78rem;
+  color: #9e7b6a;
+  text-decoration: line-through;
+}
+
+.price-retail {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #a55012;
+}
+
+.price-gst {
+  font-size: 0.74rem;
+  color: #70584a;
+  background: rgba(206,106,25,0.07);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+}
+
+/* Unit selector */
+.unit-selector {
+  margin-top: 0.5rem;
+}
+
+.unit-selector-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #70584a;
+  display: block;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.unit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.unit-chip {
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(113,76,46,0.18);
+  background: rgba(255,255,255,0.7);
+  color: #70584a;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.unit-chip:hover {
+  border-color: rgba(206,106,25,0.35);
+  color: #a55012;
+  background: rgba(206,106,25,0.06);
+}
+
+.unit-chip.active {
+  background: linear-gradient(135deg, #ce6a19, #f2b33d);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(206,106,25,0.25);
+}
+
+/* Selected unit price */
+.unit-price-display {
+  margin-top: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(206,106,25,0.07);
+  border-radius: 10px;
+  border: 1px solid rgba(206,106,25,0.12);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.unit-price-label {
+  font-size: 0.78rem;
+  color: #70584a;
+  font-weight: 500;
+}
+
+.unit-price-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #a55012;
+}
+
+/* Cart item unit label */
+.cart-item-price {
+  font-size: 0.79rem;
+  color: #70584a;
+  margin-top: 0.15rem;
 }
