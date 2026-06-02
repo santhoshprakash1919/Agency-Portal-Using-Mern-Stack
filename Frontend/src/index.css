@@ -597,3 +597,16 @@ button { cursor: pointer; }
     grid-template-columns: 1fr;
   }
 }
+/* Modal scrollable fix */
+.modal-overlay {
+  align-items: flex-start;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.modal-card {
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  margin: auto;
+  scrollbar-width: thin;
+}
