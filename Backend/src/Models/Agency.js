@@ -7,7 +7,7 @@ const agencySchema = new mongoose.Schema(
       required: [true, "Agency name is required"],
       trim: true,
     },
-    category: {
+    category:{
       type: String,
       required: [true, "Category is required"],
       trim: true,

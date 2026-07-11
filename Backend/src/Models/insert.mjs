@@ -47,7 +47,10 @@ async function insertData() {
     ]);
 
     console.log("Data inserted successfully");
-    await mongoose.disconnect();
+    await mongoose.disconnect(
+
+      
+    );
     process.exit(0);
   } catch (err) {
     console.error("Error inserting data:", err);
